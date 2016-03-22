@@ -1,0 +1,81 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib prefix="f"  uri="http://java.sun.com/jsf/core"%>
+<%@ taglib prefix="h"  uri="http://java.sun.com/jsf/html"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>Nuovo cliente</title>
+<!-- Bootstrap core CSS -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<!-- Custom styles for this template -->
+<link href="css/signin.css" rel="stylesheet">
+</head>
+<body>
+<f:view>
+<h:form>
+<div class="container">
+<div class="form-signin">
+	<h1>Registrati su IBEI</h1>
+    <div>Nome: <h:inputText value="#{customerController.name}" 
+    				 styleClass="form-control"
+                     required="true"
+                     requiredMessage="Il nome è obbligatorio"
+                     id="name"/> <h:message for="name" />
+	</div>
+    <div>Cognome: <h:inputText value="#{customerController.surname}" 
+    				 styleClass="form-control"
+                     required="true"
+                     requiredMessage="Il cognome è obbligatorio"
+                     id="surname"/> <h:message for="surname" />
+	</div>
+	<div>Città: <h:inputText value="#{customerController.city}" 
+    				 styleClass="form-control"
+                     required="true"
+                     requiredMessage="La città è obbligatoria"
+                     id="city"/> <h:message for="city" />
+	</div>
+	<div>CAP: <h:inputText value="#{customerController.zipCode}" 
+    				 styleClass="form-control"
+                     required="true"
+                     requiredMessage="Il CAP è obbligatorio"
+                     id="zipCode"/> <h:message for="zipCode" />
+	</div>
+	<div>Stato: <h:inputText value="#{customerController.state}" 
+    				 styleClass="form-control"
+                     id="state"/>
+	</div>
+	<div>Paese: <h:inputText value="#{customerController.country}" 
+    				 styleClass="form-control"
+                     required="true"
+                     requiredMessage="Il paese è obbligatorio"
+                     id="country"/> <h:message for="country" />
+	</div>
+	<div>Data di nascita (gg/mm/aaaa): <h:inputText value="#{customerController.birthDateString}" 
+    				 styleClass="form-control"
+                     required="true"
+                     requiredMessage="La data di nascita è obbligatoria"
+                     id="birthDate"/> <h:message for="birthDate" />
+	</div>
+	<div>Username: <h:inputText value="#{customerController.username}" 
+    				 styleClass="form-control"
+                     required="true"
+                     requiredMessage="Lo username è obbligatorio"
+                     id="username"/> <h:message for="username" />
+	</div>
+	<div>Password: <h:inputSecret value="#{customerController.password}" 
+    				 styleClass="form-control"
+                     required="true"
+                     requiredMessage="La password è obbligatoria"
+                     id="password"/> <h:message for="password" />
+	</div>
+	<div>
+		<h:commandButton value="Submit"  action="#{customerController.createCustomer}" styleClass="btn btn-lg btn-primary btn-block"/>
+	</div>
+</div>
+</div>
+</h:form>
+</f:view>
+</body>
+</html>

@@ -1,0 +1,36 @@
+package it.uniroma3.model;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+
+@Stateless(name="supplierFacade")
+public class SupplierFacade {
+	
+	@PersistenceContext(unitName = "unit-progetto")
+    private EntityManager em;
+	
+	public void addSupplier(Supplier supplier) {
+		em.persist(supplier);
+	}
+	
+	public Supplier getSupplier(Long id) {
+		Supplier supplier = em.find(Supplier.class, id);
+		return supplier;
+	}
+	
+	public void updateSupplier(Supplier supplier) {
+        em.merge(supplier);
+	}
+	
+    private void deleteSupplier(Supplier supplier) {
+        em.remove(supplier);
+    }
+
+    public void deleteSupplier(Long id) {
+    	Supplier supplier = em.find(Supplier.class, id);
+        deleteSupplier(supplier);
+	}
+    
+}

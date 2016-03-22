@@ -1,0 +1,26 @@
+package it.uniroma3.model;
+
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import java.util.List;
+
+@Stateless(name="administratorFacade")
+public class AdministratorFacade {
+	
+    @PersistenceContext(unitName = "unit-progetto")
+    private EntityManager em;
+    
+	public Administrator getAdministrator(String username) {
+		Query query = em.createQuery("SELECT a FROM Administrator a WHERE a.username = :name");
+		query.setParameter("name", username);
+		List<Administrator> result = query.getResultList();
+		if (result.size() == 0)
+			return null;
+		Administrator administrator = result.get(0);
+		return administrator;
+	}
+	
+}

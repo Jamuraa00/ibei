@@ -1,0 +1,121 @@
+package it.uniroma3.model;
+
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import java.util.Date;
+
+	@Entity
+	@NamedQuery(name = "findAllCustomers", query = "SELECT c FROM Customer c")
+	public class Customer {
+
+	@Column(nullable = false)
+	private String name;
+
+	@Column(nullable = false)
+	private String surname;
+
+	@Column(nullable = false)
+	private String address;
+	
+	@Column(nullable = false)
+	@Temporal(TemporalType.DATE)
+	private Date birthDate;
+	
+	@Column(nullable = false)
+	@Temporal(TemporalType.DATE)
+	private Date registrationDate;
+	
+	@Column(unique=true, nullable = false)
+	private String code;
+	
+	@Id
+	@Column(unique=true, nullable = false)
+	private String username;
+	
+	@Column(nullable = false)
+	private String password;
+	
+	public Customer() {
+    }
+
+	public Customer(String name, String surname, String address, Date birthDate, Date registrationDate, String code) {
+        this.name = name;
+        this.surname = surname;
+        this.address = address;
+        this.birthDate = birthDate;
+        this.registrationDate = registrationDate;
+        this.code = code;
+}
+	
+	public boolean checkPassword(String password){
+		return this.password.equals(password);
+	}
+
+    //Getters & Setters
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getSurname() {
+        return this.surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    
+    public Date getBirthDate() {
+        return this.birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+    
+    public Date getRegistrationDate() {
+        return this.registrationDate;
+    }
+
+    public void setRegistrationDate(Date registrationDate) {
+        this.registrationDate = registrationDate;
+    }
+    
+    public String getCode(){
+    	return this.code;
+    }
+    
+    public void setCode(String code){
+    	this.code = code;
+    }
+	
+    public boolean equals(Object obj) {
+        Customer customer = (Customer)obj;
+        return this.getCode().equals(customer.getCode());
+    }
+
+    public int hashCode() {
+         return this.code.hashCode();
+    }
+	
+}

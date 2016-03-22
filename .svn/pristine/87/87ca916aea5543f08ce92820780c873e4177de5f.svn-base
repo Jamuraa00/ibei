@@ -1,0 +1,47 @@
+package it.uniroma3.model;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
+
+import java.util.LinkedList;
+import java.util.List;
+
+@Stateless(name="orderFacade")
+public class OrderFacade {
+	
+    @PersistenceContext(unitName = "unit-progetto")
+    private EntityManager em;
+    
+	public void addOrder(Order order) {
+		em.persist(order);
+	}
+
+	public void updateOrder(Order order){
+		em.merge(order);
+	}
+
+	public List<Order> getOrders(Long id){
+		TypedQuery<Order> query = em.createQuery("SELECT o FROM Order o WHERE o.customer.id = :uId", Order.class);
+		query.setParameter("uId", id);
+		List<Order> result = query.getResultList();
+		return result;
+	}
+	
+	//Non richiesta
+	public List<Order> getAllOrders() {
+        CriteriaQuery<Order> cq = em.getCriteriaBuilder().createQuery(Order.class);
+        cq.select(cq.from(Order.class));
+        List<Order> orders = em.createQuery(cq).getResultList();
+		return orders;
+	}
+	
+	public Order getOrder(Long id){
+		Order order = em.find(Order.class, id);
+		return order;
+	}
+	
+}

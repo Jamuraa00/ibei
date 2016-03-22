@@ -1,0 +1,41 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib prefix="f"  uri="http://java.sun.com/jsf/core"%>
+<%@ taglib prefix="h"  uri="http://java.sun.com/jsf/html"%>
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Area clienti riservata</title>
+</head>
+<body>
+	<f:view>
+		<h1>${customerController.customer.name} ${customerController.customer.surname}</h1>
+		<h2>Dati cliente:</h2>
+		<div>Data di nascita: ${customerController.customer.birthDate}</div>
+		<div>Data di registrazione: ${customerController.customer.registrationDate}</div>
+		<div>Indirizzo: ${customerController.customer.address.street}</div>
+		<div>C.A.P.: ${customerController.customer.address.zipCode}</div>
+		<div>Città: ${customerController.customer.address.city}</div>
+		<div>Stato: ${customerController.customer.address.state}</div>
+		<div>Paese: ${customerController.customer.address.country}</div>
+	<h:form>
+	<ul>
+		<li><h:commandLink action="index" value="Torna alla homepage" /></li>
+		<li><h:commandLink action="#{productController.listProducts}" value="Visualizza il catalogo prodotti" /></li>
+		<c:if test="${administratorController.administrator == null}">
+			<li><h:commandLink action="#{orderController.createOrder(customerController.customer)}" value="Crea nuovo ordine (sostituisce l'ordine corrente)" /></li>
+			<li><h:commandLink action="#{orderController.listOrders(customerController.customer.id)}" value="I miei ordini" /></li>
+			<c:if test="${orderController.order != null}">
+				<li><h:commandLink action="order" value="Visualizza l'ordine corrente" /></li>
+			</c:if>
+		</c:if>
+		<c:if test="${administratorController.administrator != null}">
+			<li><h:commandLink action="administrator" value="Torna all'area amministratori" /></li>
+		</c:if>
+		<li><h:commandLink action="#{customerController.logout}" value="Logout" /></li>
+	</ul>
+	</h:form>
+	</f:view>
+</body>
+</html>

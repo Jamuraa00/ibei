@@ -1,0 +1,168 @@
+package it.uniroma3.controller;
+
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import it.uniroma3.model.Customer;
+import it.uniroma3.model.Order;
+import it.uniroma3.model.OrderFacade;
+import it.uniroma3.model.OrderLine;
+import it.uniroma3.model.Product;
+import it.uniroma3.model.ProductFacade;
+
+import javax.ejb.EJB;
+import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+
+@ManagedBean(name="orderController")
+@SessionScoped
+public class OrderController {
+	
+//	@ManagedProperty(value="#{param.id}")
+	private Long id;
+	private Order order;
+	private Integer quantity;
+	private Float price;
+	private OrderLine orderLine;
+	private List<Order> orders;
+	private String message;
+	
+	@EJB
+	private ProductFacade productFacade;
+	@EJB
+	private OrderFacade orderFacade;
+	
+	public String createOrder(Customer customer) {
+		this.order = new Order(new Date(), customer);
+		this.orderFacade.addOrder(this.order);
+		return "order";
+	}
+	
+	public String addOrderLine(Product product){
+		this.price = this.productFacade.getProduct(product.getId()).getPrice();
+		this.orderLine = new OrderLine(product, this.price, quantity);
+		this.order.getOrderLines().add(this.orderLine);
+		this.orderFacade.updateOrder(this.order);
+		findOrder(this.order.getId());
+		return "product";
+	}
+	
+	public String closeOrder(){
+		this.order.setDataChiusura(new Date());
+		this.orderFacade.updateOrder(this.order);
+		return "order";
+	}
+	
+	public String findOrder(Long id){
+		this.order = this.orderFacade.getOrder(id);
+		return "order";
+	}
+	
+	public Long findOrderData(Long id){
+		this.order = this.orderFacade.getOrder(id);
+		Long customerID = this.order.getCustomer().getId();
+		return customerID;
+	}
+	
+	public String listOrders(Long id){
+		this.orders = this.orderFacade.getOrders(id);
+		return "orders";
+	}
+	
+	public String listUnevadedOrders(){
+		this.orders = this.orderFacade.getUnevadedOrders();
+		return "orders";
+	}
+	
+	public String evadeOrder(){
+		Product productDb;
+		Product productOl;
+		Boolean disp = true;
+		for (OrderLine ol : this.order.getOrderLines()){
+			productOl = ol.getProduct();
+			productDb = this.productFacade.getProduct(productOl.getId());
+			if (productOl.getQuantity() > productDb.getQuantity()){
+				disp = false;
+				break;
+			}			
+		}
+		if (disp = true){
+			for (OrderLine ol : this.order.getOrderLines()){
+				productOl = ol.getProduct();
+				productDb = this.productFacade.getProduct(productOl.getId());
+				Integer newQuantity = productDb.getQuantity() - productOl.getQuantity();
+				productDb.setQuantity(newQuantity);
+				this.productFacade.updateProduct(productDb);
+			}
+			this.order.setDataEvasione(new Date());
+			this.orderFacade.updateOrder(this.order);
+		}
+		else{
+			setMessage("Prodotti non disponibili");
+		}
+		return "order";
+	}
+	
+	//Getters & Setters
+	
+	public Long getId() {
+		return this.id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public Order getOrder(){
+		return this.order;
+	}
+	
+	public void setOrder(Order order){
+		this.order = order;
+	}
+	
+	public OrderLine getOrderLine(){
+		return this.orderLine;
+	}
+	
+	public void setOrderLine(OrderLine orderLine){
+		this.orderLine = orderLine;
+	}
+	
+	public Integer getQuantity(){
+		return this.quantity;
+	}
+	
+	public void setQuantity(Integer quantity){
+		this.quantity = quantity;
+	}
+	
+	public Float getPrice(){
+		return this.price;
+	}
+	
+	public void setPrice(Float price){
+		this.price = price;
+	}
+	
+	public List<Order> getOrders(){
+    	return this.orders;
+    }
+    
+    public void setOrders(List<Order> orders){
+    	this.orders = orders;
+    }
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+}
+
+

@@ -1,0 +1,27 @@
+package it.uniroma3.model;
+
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaQuery;
+
+import java.util.List;
+
+@Stateless(name="customerFacade")
+public class CustomerFacade {
+	
+    @PersistenceContext(unitName = "unit-progetto")
+    private EntityManager em;
+    
+	public Customer getCustomer(String username) {
+		Query query = em.createQuery("SELECT c FROM Customer c WHERE c.username = :name");
+		query.setParameter("name", username);
+		List<Customer> result = query.getResultList();
+		if (result.size() == 0)
+			return null;
+		Customer customer = result.get(0);
+		return customer;
+	}
+	
+}

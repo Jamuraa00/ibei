@@ -1,0 +1,21 @@
+package it.uniroma3.model;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaQuery;
+import java.util.List;
+
+@Stateless(name="customerFacade")
+public class CustomerFacade {
+	
+    @PersistenceContext(unitName = "unit-progetto")
+    private EntityManager em;
+    
+	public Customer getCustomer(String username) {
+		Customer customer = em.find(Customer.class, username); //Valido solo per ricerca tramite chiave primaria
+		//Esecuzione di una query JPQL? (ho cambiato la chiave in username)
+		return customer;
+	}
+	
+}

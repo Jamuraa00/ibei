@@ -1,0 +1,36 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib prefix="f"  uri="http://java.sun.com/jsf/core"%>
+<%@ taglib prefix="h"  uri="http://java.sun.com/jsf/html"%>
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>${productController.product.name}</title>
+</head>
+<body>
+	<f:view>
+		<h1>${productController.product.name}</h1>
+		<h2>Dettagli prodotto:</h2>
+			<div>Codice: ${productController.product.code}</div>
+			<div>Prezzo: ${productController.product.price}</div>
+			<div>Descrizione: ${productController.product.description}</div>
+			<div>Quantità in magazzino: ${productController.product.quantity}</div>
+	<h:form>
+		<div>
+			<c:if test="${(orderController.order != null) && (orderController.order.dataChiusura == null)}">
+				Quantità da aggiungere all'ordine: <h:inputText value="#{orderController.quantity}" />
+				<h:commandButton action="#{orderController.addOrderLine(productController.product)}" value="Aggiungi all'ordine" />
+			</c:if>
+		</div>
+		<ul>
+			<li><h:commandLink action="products" value="Torna al catalogo prodotti" /></li>
+			<li><h:commandLink action="index" value="Torna alla homepage" /></li>
+			<c:if test="${orderController.order != null}">
+				<li><h:commandLink action="order" value="Visualizza l'ordine corrente" /></li>
+			</c:if>
+		</ul>
+	</h:form>
+	</f:view>
+</body>
+</html>

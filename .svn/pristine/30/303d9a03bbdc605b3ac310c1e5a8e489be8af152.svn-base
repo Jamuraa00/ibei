@@ -1,0 +1,21 @@
+package it.uniroma3.model;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaQuery;
+import java.util.List;
+
+@Stateless(name="orderFacade")
+public class OrderFacade {
+	
+    @PersistenceContext(unitName = "unit-progetto")
+    private EntityManager em;
+    
+	public void addOrder(Order order) {
+		em.persist(order);
+		for(OrderLine ol : order.getOrderLines())
+			em.persist(ol);
+	}
+	
+}

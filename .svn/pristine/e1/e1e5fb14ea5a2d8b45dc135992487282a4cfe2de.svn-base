@@ -1,0 +1,84 @@
+package it.uniroma3.controller;
+
+import java.util.Date;
+import java.util.List;
+
+import it.uniroma3.model.Customer;
+import it.uniroma3.model.CustomerFacade;
+import it.uniroma3.model.Order;
+import it.uniroma3.model.OrderFacade;
+
+import javax.ejb.EJB;
+import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@ManagedBean(name="customerController")
+@SessionScoped
+public class CustomerController {
+	
+//	@ManagedProperty(value="#{param.id}")
+	private String username;
+	private String password;
+	private Customer customer;
+	private String message;
+	
+	@EJB
+	private CustomerFacade customerFacade;
+	@EJB
+	private OrderFacade orderFacade;
+	
+	public String customerLogin() {
+		Customer temp = customerFacade.getCustomer(this.username);
+		if (temp == null || !(temp.checkPassword(this.password))){
+			setMessage("Username o password invalidi");
+			return "customerLogin";
+		}
+		this.customer = temp;
+		return "customer";
+	}
+	
+	public String toCustomerArea() {
+		if (this.customer == null)
+			return "customerLogin";
+		return "customer";
+	}
+	
+	//Getters & Setters
+
+	public String getUsername(){
+		return this.username;
+	}
+	
+	public void setUsername(String username){
+		this.username = username;
+	}
+	
+	public String getPassword(){
+		return this.password;
+	}
+	
+	public void setPassword(String password){
+		this.password = password;
+	}
+	
+	public String getMessage(){
+		return this.message;
+	}
+	
+	public void setMessage(String message){
+		this.message = message;
+	}
+	
+	public Customer getCustomer(){
+		return this.customer;
+	}
+	
+	public void setCustomer(Customer customer){
+		this.customer = customer;
+	}
+	
+}
