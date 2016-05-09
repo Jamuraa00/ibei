@@ -94,11 +94,11 @@
 		
 		<!-- S H I P P I N G  A D D R E S S -->
 		
-		<c:if test="${orderController.currentOrder.shippingAddress != null}">
-			<h2>Shipping address: ${orderController.currentOrder.shippingAddress.toString()}</h2>
+		<c:if test="${orderController.order.shippingAddress != null}">
+			<h2>Shipping address: ${orderController.order.shippingAddress.toString()}</h2>
 		</c:if>
-		<c:if test="${orderController.currentOrder.shippingAddress == null}">
-			<h2>Shipping address: ${orderController.currentOrder.customer.address.toString()}</h2>
+		<c:if test="${orderController.order.shippingAddress == null}">
+			<h2>Shipping address: ${orderController.order.customer.address.toString()}</h2>
 		</c:if>
 		
 		<c:if test="${orderController.order.dataEvasione != null}">

@@ -60,6 +60,9 @@
 			<div>Category: ${productController.product.category}</div>
 		<div>
 			Quantity: <h:inputText value="#{orderController.quantity}" />
+			<c:if test="${customerController.currentCustomer == null}"> 
+				<div><br>Please sign in to shop </div>
+			</c:if>
 			<c:if test="${orderController.currentOrder == null && customerController.currentCustomer != null}">
 				<h:commandButton action="#{orderController.addOrderLineNewOrder(productController.product, customerController.currentCustomer)}" value="Add to shopping cart" />
 			</c:if>

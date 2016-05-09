@@ -19,6 +19,19 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <link href="css/starter-template.css" rel="stylesheet">
+    
+    <style>
+    	body {
+ 			background: url('img/background.jpg') no-repeat center center fixed;
+ 			-webkit-background-size: cover;
+  			-moz-background-size: cover;
+  			-o-background-size: cover;
+ 			background-size: cover;
+		}
+		.starter-template {
+			text-shadow: 0px 0px 4px white;
+		}
+    </style>
 
   </head>
 

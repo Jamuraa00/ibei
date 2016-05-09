@@ -68,7 +68,6 @@ public class OrderController {
 	public String addOrderLineNewOrder(Product product, Customer customer) throws FileNotFoundException, IOException, ClassNotFoundException{
 		createOrder(customer);
 		addOrderLine(product);
-		infoBox("Added to cart!", "Order info");
 		return "products";
 	}
 	
@@ -76,6 +75,7 @@ public class OrderController {
 		this.currentOrder.setDataChiusura(new Date());
 		this.orderFacade.addOrder(this.currentOrder);
 		infoBox("Order closed!", "Order info");
+		this.currentOrder = null;
 		return "customer";
 	}
 	
@@ -111,12 +111,12 @@ public class OrderController {
 		return "orders";
 	}
 	
-	public String listUnevadedOrders() throws FileNotFoundException, IOException{
+	public String listUnevadedOrders() throws FileNotFoundException, IOException, ClassNotFoundException{
 		this.orders = this.orderFacade.getUnevadedOrders();
 		return "orders";
 	}
 	
-	public String evadeOrder() throws FileNotFoundException, IOException{
+	public String evadeOrder() throws FileNotFoundException, IOException, ClassNotFoundException{
 		this.orderFacade.evadeOrder(this.order);
 		infoBox("Order evaded!", "Order info");
 		return "order";

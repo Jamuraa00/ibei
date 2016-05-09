@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class OrderFacade {
     private final String seqNum = "seqNum";
     
 	public void addOrder(Order order) throws FileNotFoundException, IOException {
+		// Legge l'id più recente, lo scrive nell'ordine e ricrea il seq aggiornato +1
 		File seqNumber = new File(IBEIDATA_PATH+seqNum);		
 		ois = new ObjectInputStream(new FileInputStream(seqNumber));
 		Long id = ois.readLong();
@@ -40,18 +42,38 @@ public class OrderFacade {
 		oos.writeLong(id);
 		oos.close();
 		
+		// Scrive il file dell'ordine
 		File file = new File(IBEIDATA_PATH+order.getId());
 		oos = new ObjectOutputStream(new FileOutputStream(file));
 		oos.writeObject(order);
 		oos.close();
+		
+		// Aggiunge l'id dell'ordine ai non evasi
 		file = new File(IBEIDATA_PATH+"unevaded");
+		List<Long> unevaded = new ArrayList<Long>();
+		try {
+			ois = new ObjectInputStream(new FileInputStream(file));
+			unevaded = (ArrayList) ois.readObject();
+		}
+		catch (Exception e) {}
+		unevaded.add(order.getId());
+		
 		oos = new ObjectOutputStream(new FileOutputStream(file));
-		oos.writeObject(order);
+		oos.writeObject(unevaded);
 		oos.close();
 		
+		// Aggiunge l'id dell'ordine alla lista degli id degli ordini dell'utente
 		file = new File(IBEIDATA_PATH+order.getCustomer().getUsername()+"_orders");
+		List<Long> orderList = new ArrayList<Long>();
+		try {
+			ois = new ObjectInputStream(new FileInputStream(file));
+			orderList = (ArrayList) ois.readObject();
+		}
+		catch (Exception e) {}
+		orderList.add(order.getId());
+		
 		oos = new ObjectOutputStream(new FileOutputStream(file));
-		oos.writeLong(order.getId());
+		oos.writeObject(orderList);
 		oos.close();
 	}
 	
@@ -69,58 +91,61 @@ public class OrderFacade {
 		oos.close();
 	}
 
+	// Trova gli ordini di un utente
 	public List<Order> getOrders(String username) throws ClassNotFoundException, IOException{
 		File file = new File(IBEIDATA_PATH+username+"_orders");
-		ois = new ObjectInputStream(new FileInputStream(file));
-		ObjectInputStream ois2;
 		List<Order> orders = new LinkedList<Order>();
+		ObjectInputStream ois2;
 		Order tempOrder;
-		Long tempId;
+		List<Long> idList = new ArrayList<Long>();
 		try{
-			tempId = ois.readLong();
-		}catch(Exception e){tempId = null;}
-		while (tempId != null){
+			ois = new ObjectInputStream(new FileInputStream(file));
+			idList = (ArrayList) ois.readObject();
+		}
+		catch (Exception e) { return null; }		
+		
+		for (Long tempId : idList) {
 			ois2 = new ObjectInputStream(new FileInputStream(new File(IBEIDATA_PATH+tempId)));
 			tempOrder = (Order) ois2.readObject();
 			orders.add(tempOrder);
-			try{
-				tempId = ois.readLong();
-			}catch(Exception e){tempId = null;}
 		}
 		return orders;
 	}
 	
-	public List<Order> getUnevadedOrders() throws FileNotFoundException, IOException{
+	public List<Order> getUnevadedOrders() throws FileNotFoundException, IOException, ClassNotFoundException{
 		File file = new File(IBEIDATA_PATH+"unevaded");
 		ois = new ObjectInputStream(new FileInputStream(file));
+		ObjectInputStream ois2;
 		List<Order> unevadedOrders = new LinkedList<Order>();
 		Order tempOrder;
-		try{
-			tempOrder = (Order) ois.readObject();
-		}catch(Exception e){tempOrder = null;}
-		while (tempOrder != null){
+		List<Long> idList = new ArrayList<Long>();
+		
+		try{ idList = (ArrayList) ois.readObject(); }
+		catch (Exception e) { return null; }
+		
+		for (Long tempId : idList) {
+			ois2 = new ObjectInputStream(new FileInputStream(new File(IBEIDATA_PATH+tempId)));
+			tempOrder = (Order) ois2.readObject();
 			unevadedOrders.add(tempOrder);
-			try{
-				tempOrder = (Order) ois.readObject();
-			}catch (Exception e){tempOrder = null;}
 		}
 		return unevadedOrders;
 	}
 	
-	public void evadeOrder(Order order) throws FileNotFoundException, IOException{
-		List<Order> unevaded = getUnevadedOrders();
-		unevaded.remove(order);
+	public void evadeOrder(Order order) throws FileNotFoundException, IOException, ClassNotFoundException{
+		ois = new ObjectInputStream(new FileInputStream(new File(IBEIDATA_PATH+"unevaded")));
+		List<Long> idList = new ArrayList<Long>();
+		try { idList = (ArrayList) ois.readObject(); }
+		catch (Exception e) {}
+		ois.close();
+		
+		idList.remove(order.getId());
+		
+		oos = new ObjectOutputStream(new FileOutputStream(new File(IBEIDATA_PATH+"unevaded")));
+		oos.writeObject(idList);
+		oos.close();
+		
 		order.setDataEvasione(new Date());
 		updateOrder(order);
-		File file = new File(IBEIDATA_PATH+"unevaded");
-		file.delete();
-		File file2 = new File(IBEIDATA_PATH+"unevaded");
-		oos = new ObjectOutputStream(new FileOutputStream(file2));
-		for (Order tempOrder: unevaded){
-			if (!tempOrder.isSame(order))
-				oos.writeObject(tempOrder);
-		}
-		oos.close();
 	}
 	
 	public Order getOrder(Long id) throws ClassNotFoundException, IOException{
