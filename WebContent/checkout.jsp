@@ -42,7 +42,9 @@
 			<c:if test="${administratorController.administrator != null}">
 				<li><h:commandLink action="#{administratorController.toAdministratorArea}" value="#{administratorController.administrator.name}" /></li>
 			</c:if>
-			<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			<c:if test="${customerController.currentCustomer == null}">
+				<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			</c:if>
           </ul>
         </div>
       </div>
@@ -75,12 +77,12 @@
 		
 		<div><h:commandLink value="Ship to a different address?" action="setShippingAddress" /></div>		
 		
-		<h:commandButton action="#{productController.listProducts}" value="Continue shopping"/>
+		<h:commandButton action="#{productController.listProducts}" value="Back to product catalog" styleClass="btn btn-default"/>
 		<c:if test="${(orderController.order.dataChiusura == null) && (orderController.order.orderLinesLength != 0)}">
-			<div><h:commandButton action="#{orderController.closeOrder}" value="Close order" /></div>
+			<div><h:commandButton action="#{orderController.closeOrder}" value="Confirm order" styleClass="btn btn-default" /></div>
 		</c:if>
 		<c:if test="${orderController.order.dataChiusura == null}">
-			<div><h:commandButton action="#{orderController.cancelOrder}" value="Cancel order" /></div>
+			<div><h:commandButton action="#{orderController.cancelOrder}" value="Delete order" styleClass="btn btn-default"/></div>
 		</c:if>
 	</c:if>
 	</div>

@@ -44,7 +44,9 @@
 			<c:if test="${administratorController.administrator != null}">
 				<li><h:commandLink action="#{administratorController.toAdministratorArea}" value="#{administratorController.administrator.name}" /></li>
 			</c:if>
-			<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			<c:if test="${customerController.currentCustomer == null}">
+				<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			</c:if>
           </ul>
         </div>
       </div>

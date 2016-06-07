@@ -29,6 +29,7 @@ public class ProductController {
 	public final String videogames = "Videogames";
 	private Product product;
 	private List<Product> products;
+	private String currentCategory;
 	
 	@EJB
 	private ProductFacade productFacade;
@@ -41,6 +42,7 @@ public class ProductController {
 	
 	public String listProducts() throws FileNotFoundException, ClassNotFoundException, IOException {
 		this.products = productFacade.getAllProducts();
+		setCurrentCategory(null);
 		return "products"; 
 	}
 
@@ -56,6 +58,7 @@ public class ProductController {
 	
 	public String findByCategory(String category) throws FileNotFoundException, ClassNotFoundException, IOException{
 		this.products = productFacade.findByCategory(category);
+		setCurrentCategory(category);
 		return "products";
 	}
 	
@@ -135,6 +138,14 @@ public class ProductController {
 
 	public String getVideogames() {
 		return videogames;
+	}
+	
+	public String getCurrentCategory() {
+		return this.currentCategory;
+	}
+	
+	public void setCurrentCategory(String currentCategory) {
+		this.currentCategory = currentCategory;
 	}
 	
 }

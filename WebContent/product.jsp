@@ -42,7 +42,9 @@
 			<c:if test="${administratorController.administrator != null}">
 				<li><h:commandLink action="#{administratorController.toAdministratorArea}" value="#{administratorController.administrator.name}" /></li>
 			</c:if>
-			<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			<c:if test="${customerController.currentCustomer == null}">
+				<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			</c:if>
           </ul>
         </div>
       </div>
@@ -59,7 +61,20 @@
 			<div>Description: ${productController.product.description}</div>
 			<div>Category: ${productController.product.category}</div>
 		<div>
-			Quantity: <h:inputText value="#{orderController.quantity}" />
+			Quantity: 
+			
+			<h:selectOneMenu value="#{orderController.quantity}" >
+        		<f:selectItem itemValue="1" itemLabel="1" />
+        		<f:selectItem itemValue="2" itemLabel="2" />
+        		<f:selectItem itemValue="3" itemLabel="3" />
+        		<f:selectItem itemValue="4" itemLabel="4" />
+        		<f:selectItem itemValue="5" itemLabel="5" />
+        		<f:selectItem itemValue="6" itemLabel="6" />
+        		<f:selectItem itemValue="7" itemLabel="7" />
+        		<f:selectItem itemValue="8" itemLabel="8" />
+        		<f:selectItem itemValue="9" itemLabel="9" />
+    		</h:selectOneMenu>
+    						
 			<c:if test="${customerController.currentCustomer == null}"> 
 				<div><br>Please sign in to shop </div>
 			</c:if>
@@ -70,9 +85,10 @@
 				<h:commandButton action="#{orderController.addOrderLine(productController.product)}" value="Add to shopping cart" />
 			</c:if>
 		</div>
-		<c:if test="${orderController.currentOrder != null && customerController.currentCustomer != null}">
-			<h:commandLink action="#{orderController.toOrder}" value="View shopping cart" />
-		</c:if>
+		<br>
+		<div>
+			<h:commandButton action="#{productController.listProducts}" value="Back to catalog" styleClass="btn btn-default"/>
+		</div>
 
 	</div>
 	</div>

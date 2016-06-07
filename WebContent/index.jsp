@@ -36,6 +36,9 @@
   </head>
 
   <body>
+  
+  	<!-- N A V B A R -->
+  
 	<f:view>
 	<h:form>
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -65,15 +68,21 @@
 			<c:if test="${administratorController.administrator != null}">
 				<li><h:commandLink action="#{administratorController.toAdministratorArea}" value="#{administratorController.administrator.name}" /></li>
 			</c:if>
-			<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			<c:if test="${customerController.currentCustomer == null}">
+				<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			</c:if>
           </ul>
         </div>
       </div>
     </div>
+    
+    <!-- N A V B A R -->
 
     <div class="container">
 
       <div class="starter-template">
+      
+      	<!-- U S E R  N O T  L O G G E D -->
         
         <c:if test="${customerController.currentCustomer == null}">
         	<h1>Welcome on IBEI!</h1>
@@ -82,9 +91,27 @@
         		<br><div>Already a customer?</div>
         		<br><div><h:commandButton action="customerLogin" value="Login" styleClass="btn btn-default"/></div>
         </c:if>
+        
+        <!-- U S E R  L O G G E D -->
+        
         <c:if test="${customerController.currentCustomer != null}">
         	<h1>Welcome back on IBEI ${customerController.currentCustomer.getName()}!</h1>
         	<p>Are you ready to start shopping?</p>
+        	<br>
+        	<h4>Here are some things you can do:</h4>
+        	<br>
+        	<h:commandButton action="#{productController.listProducts}" value="Browse the product catalog" styleClass="btn btn-default"/>
+        	<br>
+        	<br>
+        	<h:commandButton action="#{customerController.toCustomerArea}" value="Go to your personal area" styleClass="btn btn-default"/>
+        	<br>
+        	<br>
+        	<h:commandButton action="#{customerController.logout }" value="Logout" styleClass="btn btn-default" />
+        	<c:if test="${orderController.currentOrder != null }">
+        		<br>
+        		<br>
+        		<h:commandButton action="#{orderController.toOrder }" value="View shopping cart" />
+        	</c:if>
         </c:if>
       </div>
 

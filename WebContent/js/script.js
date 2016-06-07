@@ -1,28 +1,32 @@
+//D3
 var h = 500;
 var w = 1050;
 var padding = 40;
 
 var legendSize = 100;
-
-//var timeFormat = d3.time.format('%b \'%y');
+var datavar;
+var nested_data;
 var timeFormat = d3.time.format('%Y-%m-%d');
-var datemin = new Date();
-datemin.setMonth(5);
-datemin.setHours(0);
-var x = d3.time.scale()
-	.domain([datemin,new Date().setHours(0)])
-	.range([padding,w-padding - legendSize  - 10]);
-	
 
+var x = d3.scale.ordinal()
+	.domain(["5 15","6 15","7 15", "8 15", "9 15", "10 15","11 15","0 16","1 16", "2 16","3 16","4 16","5 16"])
+	.rangeRoundBands([padding, w-padding - legendSize  - 10], .1);
+	
 var y = d3.scale.linear()
-	.domain([0,200])
 	.range([h - padding,padding]);
 
 var xAxis = d3.svg.axis()
 	.scale(x)
 	.orient('bottom')
-	.ticks(12)
-	.tickFormat(d3.time.format('%d/%m'));
+	.tickFormat(function(d) {
+		n = d.split(" ");
+		n0 = +n[0] + 1;
+		d = n0 + " " + n[1]
+		f = d3.time.format('%m %y');
+		s = f.parse(d);
+		f = d3.time.format('%b \'%y');
+		return f(s);
+	});
 
 var yAxis = d3.svg.axis()
 	.scale(y)
@@ -44,7 +48,7 @@ svg.append("text")
     .attr("text-anchor", "end")
     .attr("x", w - padding - legendSize)
     .attr("y", h - 10)
-    .text("Days");
+    .text("Months");
 
 svg.append('g')
 	.attr('class','axis')
@@ -66,225 +70,102 @@ var line = d3.svg.line()
 	.y(function(d) {return y(d.quantity);})
 	.interpolate('basis');
 
-
-var airfrance=[], alitalia=[], ba=[];
-var company = new Set();
-
-d3.csv('data/sales.csv', function(data) {
+d3.csv('data/data.csv', function(data) {
+	datavar = data;
 	data.forEach(function(d) {
 		d.date = timeFormat.parse(d['date']);
+		d.month = d.date.getMonth() + " " + d.date.getFullYear();
 		d.name = d['name'];
 		d.cat = d['category'];
 		d.quantity = +d['quantity'];
 		d.price = +d['price'];
 		d.color = d['cat_color'];
-		
-			
-		/*else if(d.companyCode == 'BA')
-			ba.push(d);
-		else if(d.companyCode == 'AF')
-			airfrance.push(d);*/
 	});
-
-	svg.selectAll('.line')
-		.data([data])
-		.enter()
-		.append('path')
-		.attr('class', 'line')
-		.attr('fill','none')
-		.attr('stroke','white')
-		.attr('d', line);
-
-	svg.selectAll('rect.legend')
-		.data([data])
-		.enter()
-		.append('rect')
-		.attr('class','legend')
-		.attr('x',w - padding - legendSize + 5)
-		.attr('y',function(d,i) {return h})
-		.attr('width', 10)
-    	.attr('height', 10)
-		.attr('fill',function(d) {return d[0].color})
-
-	svg.selectAll('text.legend')
-		.data([data])
-		.enter()
-		.append('text')
-		.attr('class','legend')
-	    .attr('x', w - padding - legendSize + 20)
-	    .attr('y', function(d, i){ return h/2 + i*20 + 9;})
-	    .text(function(d){ return '' });
+	
+	nested_data = d3.nest()
+		.key(function(d) {return d.month})
+		.rollup(function(d) {
+			return d3.sum(d, function(g) {return g.quantity; })
+		})
+		.entries(data)
 		
-	svg.selectAll('.line')
-		.data([data])
-		.transition()
-		.duration(500)
-		.attr('stroke-width',1.5)
-		.attr('stroke',function(d) {return d[0].color})
-		.attr('d', line);
+	y.domain([0, d3.max(nested_data, function(d) { return d.values; })]);
+	svg.select('g#xaxis').transition().duration(1000).call(xAxis);
 
-	svg.selectAll('rect.legend')
-		.data([data])
-		//.transition()
-		//.duration(500)
-		//.attr('x',w - legendSize)
-		.attr('y',function(d,i) {return h/2 + i*20})
-		//.attr('width', 10)
-    	//.attr('height', 10)
-		.attr('fill',function(d) {return d[0].color})
-
-	svg.selectAll('text.legend')
-		.data([data])
-		.transition()
-		.duration(500)
-	    //.attr('x', w - padding - 40 + 5)
-	    //.attr('y', function(d, i){ return h/2 + i*20 + 9;})
-	    .text(function(d){ return d[0].name; });
-
-	svg.selectAll('.line')
-		.data([data])
-		.exit()
-		.transition()
-		.duration(500)
-		.attr('stroke','white')
-		.remove()
-
-	svg.selectAll('rect.legend')
-		.data([data])
-		.exit()
-		//.transition()
-		//.duration(500)
-		//.attr('y',0)
-		//.attr('width', 0)
-    	//.attr('height', 0)
-		.remove()
-
-	svg.selectAll('text.legend')
-		.data([data])
-	    .exit()
-	    //.transition()
-		//.duration(500)
-	    //.attr('x', w)
-	    //.attr('y', 0)
-	    .text(function(d){ return ''})
-		.remove()
-
-	//data =[airfrance,alitalia,ba];
-
-	//x.domain(d3.extent(data, function(d) {return d.date}));
-});
+	svg.select('g#yaxis').transition().duration(1000).call(yAxis);
 	
+	svg.selectAll(".bar")
+    	.data(nested_data)
+    	.enter().append("rect")
+    		.attr("class", "bar")
+    		.attr("x", function(d) { return x(d.key); })
+			.attr("width", x.rangeBand())
+			.attr("y", function(d) { return y(d.values); })
+			.attr("height", function(d) { return h - y(d.values) - padding; })
+			.attr('fill','#4682B4');
 
-	//Draw axis
-//	svg.select('g#xaxis').transition().duration(1000).call(xAxis);
-
-//	svg.select('g#yaxis').transition().duration(1000).call(yAxis);
-
-
-/*$('#form input:checkbox').change(function() {
-		
-		if($(this).prop('checked'))
-			company.add($(this).val());
-		else
-			company.delete($(this).val())
-		
-		f(data,company);
-	});
-});*/
-function f(data,company) {
+function filter(data,category) {
+	 var color;
+	 var filtered = data
+	if(category != "Overall") {
+		filtered = data.filter(function(d) {
+			return d.category == category;
+		});
+		color = filtered[0].cat_color;
+	}
+	else
+		color = '#4682B4'
+	nested_data = d3.nest()
+	.key(function(d) {return d.month})
+	.rollup(function(d) {
+		return d3.sum(d, function(g) {return g.quantity; })
+	})
+	.entries(filtered);
 	
-	var datum = data.filter(function(d) {
-		return company.has(d[0].companyCode);
-	});
+	y.domain([0, d3.max(nested_data, function(d) { return d.values; })]);
+	svg.select('g#xaxis').transition().duration(1000).call(xAxis);
 
+	svg.select('g#yaxis').transition().duration(1000).call(yAxis);
+	
+	svg.selectAll(".bar")
+    	.data(nested_data)
+    	.enter().append("rect")
+    		.attr("class", "bar")
+    		.attr("x", function(d) { return x(d.key); })
+			.attr("width", x.rangeBand())
+			.attr("y", function(d) { return y(d.values); })
+			.attr("height", function(d) { return h - y(d.values) - padding; })
+			//.attr('fill','black');
+	
+	svg.selectAll(".bar")
+	.data(nested_data)
+	.transition()
+	.duration(1000)
+	.attr("y", function(d) { return y(d.values); })
+	.attr("height", function(d) { return h - y(d.values) - padding; })
+	.attr('fill',color);
 	
 	svg.selectAll('.line')
-		.data(datum)
-		.enter()
-		.append('path')
-		.attr('class', 'line')
-		.attr('fill','none')
-		.attr('stroke','white')
-		.attr('d', line);
-
-	svg.selectAll('rect.legend')
-		.data(datum)
-		.enter()
-		.append('rect')
-		.attr('class','legend')
-		.attr('x',w - padding - legendSize + 5)
-		.attr('y',function(d,i) {return h})
-		.attr('width', 10)
-    	.attr('height', 10)
-		.attr('fill',function(d) {return d[0].color})
-
-	svg.selectAll('text.legend')
-		.data(datum)
-		.enter()
-		.append('text')
-		.attr('class','legend')
-	    .attr('x', w - padding - legendSize + 20)
-	    .attr('y', function(d, i){ return h/2 + i*20 + 9;})
-	    .text(function(d){ return '' });
-		
-	svg.selectAll('.line')
-		.data(datum)
-		.transition()
-		.duration(500)
-		.attr('stroke-width',1.5)
-		.attr('stroke',function(d) {return d[0].color})
-		.attr('d', line);
-
-	svg.selectAll('rect.legend')
-		.data(datum)
-		//.transition()
-		//.duration(500)
-		//.attr('x',w - legendSize)
-		.attr('y',function(d,i) {return h/2 + i*20})
-		//.attr('width', 10)
-    	//.attr('height', 10)
-		.attr('fill',function(d) {return d[0].color})
-
-	svg.selectAll('text.legend')
-		.data(datum)
-		.transition()
-		.duration(500)
-	    //.attr('x', w - padding - 40 + 5)
-	    //.attr('y', function(d, i){ return h/2 + i*20 + 9;})
-	    .text(function(d){ return d[0].companyName; });
-
-	svg.selectAll('.line')
-		.data(datum)
-		.exit()
-		.transition()
-		.duration(500)
-		.attr('stroke','white')
-		.remove()
-
-	svg.selectAll('rect.legend')
-		.data(datum)
-		.exit()
-		//.transition()
-		//.duration(500)
-		//.attr('y',0)
-		//.attr('width', 0)
-    	//.attr('height', 0)
-		.remove()
-
-	svg.selectAll('text.legend')
-		.data(datum)
-	    .exit()
-	    //.transition()
-		//.duration(500)
-	    //.attr('x', w)
-	    //.attr('y', 0)
-	    .text(function(d){ return ''})
-		.remove()
-	
-	//Draw axis
-	//svg.select('g#xaxis').transition().duration(500).call(xAxis);
-
-	//svg.select('g#yaxis').transition().duration(500).call(yAxis);
-
-	
+	.data(nested_data)
+	.exit()
+	.transition()
+	.duration(500)
+	.attr("height", function(d) { return h - padding; })
+	.remove()
 }
+
+//JQUERY
+$("#ovrl").toggleClass("btn-default btn-primary");
+
+$('#button-row > .btn').click(function() {
+	$('#button-row > .btn').each(function() {
+		$(this).toggleClass("btn-default",true)
+		$(this).toggleClass("btn-primary",false)
+	});
+	$(this).toggleClass("btn-default",false)
+	$(this).toggleClass("btn-primary",true)
+	
+	filter(datavar, $(this).text())
+});
+});
+

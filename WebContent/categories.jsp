@@ -47,7 +47,9 @@
 			<c:if test="${administratorController.administrator != null}">
 				<li><h:commandLink action="#{administratorController.toAdministratorArea}" value="#{administratorController.administrator.name}" /></li>
 			</c:if>
-			<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			<c:if test="${customerController.currentCustomer == null}">
+				<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			</c:if>
           </ul>
         </div>
       </div>
@@ -66,9 +68,7 @@
 			  		<div><h:commandLink action="#{productController.findByCategory(productController.sport)}" value="Sports and outdoors" /></div>
 			  		<div><h:commandLink action="#{productController.findByCategory(productController.videogames)}" value="Videogames" /></div>
 				</div>
-				<c:if test="${customerController.currentCustomer != null}">
-					<div><h:commandButton action="#{orderController.createOrder(customerController.customer)}" value="Start shopping" styleClass="btn btn-default" /></div>
-				</c:if>
+				<h:commandButton action="#{productController.listProducts}" value="Back to product catalog" styleClass="btn btn-default"/>
 				<c:if test="${orderController.currentOrder != null}">
 					<div><h:commandButton action="order" value="View shopping cart" styleClass="btn btn-default"/></div>
 				</c:if>

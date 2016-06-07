@@ -42,7 +42,9 @@
 			<c:if test="${administratorController.administrator != null}">
 				<li><h:commandLink action="#{administratorController.toAdministratorArea}" value="#{administratorController.administrator.name}" /></li>
 			</c:if>
-			<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			<c:if test="${customerController.currentCustomer == null}">
+				<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			</c:if>
           </ul>
         </div>
       </div>
@@ -85,9 +87,40 @@
 		<div>Closing date: ${orderController.order.dataChiusura}</div>
 		<div>Evasion date: ${orderController.order.dataEvasione}</div>
 		<h2>Products details</h2>
+		
 			<ul>
-				<c:forEach var="orderLine" items="#{orderController.order.orderLines}">
-					<li>${orderLine.product.name} ${orderLine.price}$ x${orderLine.quantity}</li>
+				<c:forEach var="orderLine" items="#{orderController.order.orderLines}">					
+					<li>${orderLine.product.name} ${orderLine.price}$
+					
+						<!-- S H O W S  D R O P  D O W N  M E N U -->
+					
+						<c:if test="${orderController.order.dataChiusura == null}">
+							<h:form>
+	    						<h:selectOneMenu valueChangeListener="#{orderLine.valueChanged()}" 
+	                     		onchange="submit()" value="#{orderLine.quantity}" >
+	        						<f:selectItem itemValue="1" itemLabel="1" />
+	        						<f:selectItem itemValue="2" itemLabel="2" />
+	        						<f:selectItem itemValue="3" itemLabel="3" />
+	        						<f:selectItem itemValue="4" itemLabel="4" />
+	        						<f:selectItem itemValue="5" itemLabel="5" />
+	        						<f:selectItem itemValue="6" itemLabel="6" />
+	        						<f:selectItem itemValue="7" itemLabel="7" />
+	        						<f:selectItem itemValue="8" itemLabel="8" />
+	        						<f:selectItem itemValue="9" itemLabel="9" />
+	    						</h:selectOneMenu>
+	    						
+								<h:commandButton action="#{orderController.removeOrderLine(orderLine)}" value="Remove from cart" />
+	    						
+							</h:form>
+						</c:if>
+						
+						<!-- S H O W S  Q U A N T I T Y -->
+						
+						<c:if test="${orderController.order.dataChiusura != null}">
+							x${orderLine.quantity}
+						</c:if>
+
+					</li>
 				</c:forEach>
 			</ul>
 		<h2>Total to be paid: ${orderController.getTotal()}$</h2>
@@ -110,13 +143,17 @@
 			<h:commandLink action="#{orderController.listOrders(customerController.currentCustomer.username)}" value="My orders" />
 		</c:if>
 		<c:if test="${(orderController.order.dataChiusura == null) && (orderController.order.orderLinesLength != 0)}">
-			<div><h:commandButton action="checkout" value="Checkout" /></div>
+			<div><h:commandButton action="checkout" value="Checkout" styleClass="btn btn-default"/></div>
 		</c:if>
 		<c:if test="${(orderController.order.dataChiusura != null) && (orderController.order.dataEvasione == null)}">
 			<div>Order closed.</div>
+			<br>
 		</c:if>
 		<c:if test="${orderController.order.dataChiusura == null }">
-			<div><h:commandButton action="#{orderController.cancelOrder }" value="Cancel order" /></div>
+			<div><h:commandButton action="#{orderController.cancelOrder }" value="Delete order" styleClass="btn btn-default"/></div>
+		</c:if>
+		<c:if test="${orderController.currentOrder != null}">
+			<div><h:commandButton action="#{productController.listProducts}" value="Browse the product catalog" styleClass="btn btn-default"/> </div>
 		</c:if>
 	</c:if>
 	</div>

@@ -18,31 +18,31 @@
 <div class="container">
 <div class="form-signin">
 	<h1>Sign up on IBEI</h1>
-    <div>Name: <h:inputText value="#{customerController.name}" 
+    <div>Name* <h:inputText value="#{customerController.name}" 
     				 styleClass="form-control"
                      required="true"
                      requiredMessage="Name is mandatory"
                      id="name"/> <h:message for="name" />
 	</div>
-    <div>Surname: <h:inputText value="#{customerController.surname}" 
+    <div>Surname* <h:inputText value="#{customerController.surname}" 
     				 styleClass="form-control"
                      required="true"
                      requiredMessage="Surname is mandatory"
                      id="surname"/> <h:message for="surname" />
 	</div>
-	<div>Address: <h:inputText value="#{customerController.street}" 
+	<div>Address* <h:inputText value="#{customerController.street}" 
     				 styleClass="form-control"
                      required="true"
                      requiredMessage="Address is mandatory"
                      id="street"/> <h:message for="street" />
 	</div>
-	<div>City: <h:inputText value="#{customerController.city}" 
+	<div>City* <h:inputText value="#{customerController.city}" 
     				 styleClass="form-control"
                      required="true"
                      requiredMessage="City is mandatory"
                      id="city"/> <h:message for="city" />
 	</div>
-	<div>Zip code: <h:inputText value="#{customerController.zipCode}" 
+	<div>Zip code* <h:inputText value="#{customerController.zipCode}" 
     				 styleClass="form-control"
                      required="true"
                      requiredMessage="Zip code is mandatory"
@@ -52,19 +52,19 @@
     				 styleClass="form-control"
                      id="state"/>
 	</div>
-	<div>Country: <h:inputText value="#{customerController.country}" 
+	<div>Country* <h:inputText value="#{customerController.country}" 
     				 styleClass="form-control"
                      required="true"
                      requiredMessage="Country is mandatory"
                      id="country"/> <h:message for="country" />
 	</div>
-	<div>Birthdate (gg/mm/aaaa): <h:inputText value="#{customerController.birthDateString}" 
+	<div>Birthdate* (gg/mm/aaaa) <h:inputText value="#{customerController.birthDateString}" 
     				 styleClass="form-control"
                      required="true"
                      requiredMessage="Birthdate is mandatory"
                      id="birthDate"/> <h:message for="birthDate" />
 	</div>
-	<div>e-mail address: <h:inputText value="#{customerController.email}" 
+	<div>e-mail address* <h:inputText value="#{customerController.email}" 
     				 styleClass="form-control"
                      required="true"
                      requiredMessage="e-mail address is mandatory"
@@ -74,17 +74,23 @@
     				 styleClass="form-control"
                      id="phoneNumber"/>
 	</div>
-	<div>Username: <h:inputText value="#{customerController.username}" 
+	<div>Username* <h:inputText value="#{customerController.username}" 
     				 styleClass="form-control"
                      required="true"
                      requiredMessage="Username is mandatory"
                      id="username"/> <h:message for="username" />
 	</div>
-	<div>Password: <h:inputSecret value="#{customerController.password}" 
+	<div>Password* <h:inputSecret value="#{customerController.password}" 
     				 styleClass="form-control"
                      required="true"
                      requiredMessage="password is mandatory"
                      id="password"/> <h:message for="password" />
+	</div>
+	<div>Re-Type Password* <h:inputSecret value="#{customerController.password2}" 
+    				 styleClass="form-control"
+                     required="true"
+                     requiredMessage="password is mandatory"
+                     id="password2"/> <h:message for="password2" />
 	</div>
 	<div>
 		<h:commandButton value="Submit"  action="#{customerController.createCustomer}" styleClass="btn btn-lg btn-primary btn-block"/>

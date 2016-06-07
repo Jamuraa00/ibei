@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.faces.bean.SessionScoped;
+import javax.faces.event.ValueChangeEvent;
 import javax.swing.JOptionPane;
 
 import it.uniroma3.model.Address;
@@ -32,6 +33,7 @@ public class OrderController {
 	private OrderLine orderLine;
 	private List<Order> orders;
 	private String message;
+	private Integer count;
 	
 	private String street;
 	private String city;
@@ -53,9 +55,14 @@ public class OrderController {
 	}
 	
 	public String cancelOrder() throws FileNotFoundException, IOException{
-		this.currentOrder = null;
-		infoBox("Order cancelled!", "Order info");
-		return "customer";
+		int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this order?","Warning",JOptionPane.YES_NO_OPTION);
+		if (dialogResult == JOptionPane.YES_OPTION){
+			this.currentOrder = null;
+			infoBox("Order deleted!", "Order info");
+			return "customer";
+		}
+		else
+			return "order";
 	}
 	
 	public String addOrderLine(Product product) throws FileNotFoundException, IOException, ClassNotFoundException{
@@ -71,12 +78,28 @@ public class OrderController {
 		return "products";
 	}
 	
+	public String removeOrderLine(OrderLine ol) throws FileNotFoundException, IOException{
+		this.currentOrder.getOrderLines().remove(ol);
+		infoBox("Removed from cart!", "Order info");
+		if (this.currentOrder.getOrderLines().size() == 0){
+			this.currentOrder = null;
+			infoBox("Order deleted!", "Order info");
+			return "customer";
+		}
+		return "order";
+	}
+	
 	public String closeOrder() throws FileNotFoundException, IOException{
-		this.currentOrder.setDataChiusura(new Date());
-		this.orderFacade.addOrder(this.currentOrder);
-		infoBox("Order closed!", "Order info");
-		this.currentOrder = null;
-		return "customer";
+		int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to close this order?","Warning",JOptionPane.YES_NO_OPTION);
+		if (dialogResult == JOptionPane.YES_OPTION){
+			this.currentOrder.setDataChiusura(new Date());
+			this.orderFacade.addOrder(this.currentOrder);
+			infoBox("Order closed!", "Order info");
+			this.currentOrder = null;
+			return "customer";
+		}
+		else
+			return "order";
 	}
 	
 	public String setShippingAddress(){
@@ -128,6 +151,16 @@ public class OrderController {
 	
 	public void infoBox(String infoMessage, String titleBar){
 		JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	public void valueChanged(ValueChangeEvent event) {
+	    Integer newQuantity = (Integer) event.getNewValue();
+	    OrderLine ol = this.currentOrder.getOrderLines().get(count);
+	    ol.setQuantity(newQuantity);
+	}
+	
+	public OrderLine getOrderLine (int number) {
+		return this.currentOrder.getOrderLines().get(number);
 	}
 	
 	//Getters & Setters
@@ -234,6 +267,14 @@ public class OrderController {
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+	
+	public Integer getCount() {
+		return this.count;
+	}
+	
+	public void setCount(Integer count) {
+		this.count = count;
 	}
 
 }

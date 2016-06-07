@@ -9,6 +9,7 @@ import javax.persistence.NamedQuery;
 
 import java.io.Serializable;
 
+import javax.faces.event.ValueChangeEvent;
 import javax.persistence.Column;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -43,7 +44,12 @@ import javax.persistence.Table;
         this.product = product;
         this.price = price;
         this.quantity = quantity;
-}
+	}
+	
+	public void valueChanged(ValueChangeEvent event) {
+	    Integer newQuantity = (Integer) event.getNewValue();
+	    setQuantity(newQuantity);
+	}
 
     //Getters & Setters        
 	

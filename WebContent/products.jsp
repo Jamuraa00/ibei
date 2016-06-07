@@ -47,7 +47,9 @@
 			<c:if test="${administratorController.administrator != null}">
 				<li><h:commandLink action="#{administratorController.toAdministratorArea}" value="#{administratorController.administrator.name}" /></li>
 			</c:if>
-			<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			<c:if test="${customerController.currentCustomer == null}">
+				<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			</c:if>
           </ul>
         </div>
       </div>
@@ -56,7 +58,7 @@
     <div class="container">
 		<div class="starter-template">
 			<small>You are here: <h:commandLink action="index" value="Home"/>>Product catalog</small>
-			<h1>Product catalog</h1>
+			<h1>Product catalog<c:if test="${productController.currentCategory != null}">: category ${productController.currentCategory}</c:if></h1>
 			<div class="panel panel-default">
 	  			<!-- Default panel contents -->
 	  			<div class="panel-heading">Products in store</div>
@@ -72,10 +74,8 @@
 						</c:forEach>
 		  			</table>
 				</div>
+				<div><c:if test="${productController.currentCategory != null}"><h:commandButton action="#{productController.listProducts()}" value="Back to product catalog" styleClass="btn btn-default"/></c:if></div>
 				<div><h:commandButton action="categories" value="Search by category" styleClass="btn btn-default"/></div>
-				<c:if test="${customerController.currentCustomer != null}">
-					<div><h:commandButton action="#{orderController.createOrder(customerController.customer)}" value="New cart" styleClass="btn btn-default" /></div>
-				</c:if>
 				<c:if test="${orderController.currentOrder != null}">
 					<div><h:commandButton action="#{orderController.toOrder }" value="View shopping cart" styleClass="btn btn-default"/></div>
 				</c:if>

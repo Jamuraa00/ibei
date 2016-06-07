@@ -45,7 +45,9 @@
 			<c:if test="${administratorController.administrator != null}">
 				<li><h:commandLink action="#{administratorController.toAdministratorArea}" value="#{administratorController.administrator.name}" /></li>
 			</c:if>
-			<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			<c:if test="${customerController.currentCustomer == null}">
+				<li><h:commandLink action="newCustomer" value="Sign up" /></li>
+			</c:if>
           </ul>
         </div>
       </div>
@@ -58,16 +60,18 @@
     <c:if test="${customerController.currentCustomer != null }">
 		<h1>${customerController.currentCustomer.name} ${customerController.currentCustomer.surname}</h1>
 		<h2>Customer data:</h2>
-		<div>Birthdate: ${customerController.currentCustomer.birthDate}</div>
-		<div>Registration date: ${customerController.currentCustomer.registrationDate}</div>
-		<div>Address: ${customerController.currentCustomer.address.street}</div>
-		<div>Zip code: ${customerController.currentCustomer.address.zipCode}</div>
-		<div>City: ${customerController.currentCustomer.address.city}</div>
-		<div>State: ${customerController.currentCustomer.address.state}</div>
-		<div>Country: ${customerController.currentCustomer.address.country}</div>
-		<div>e-mail address: ${customerController.currentCustomer.email}</div>
-		<c:if test="${customerController.currentCustomer.phoneNumber != null}">
-			<div>Phone number: ${customerController.currentCustomer.phoneNumber}</div>
+		<div><b>Birthdate:</b> ${customerController.currentCustomer.birthDate}</div>
+		<div><b>Registration date:</b> ${customerController.currentCustomer.registrationDate}</div>
+		<div><b>Address:</b> ${customerController.currentCustomer.address.street}</div>
+		<div><b>Zip code:</b> ${customerController.currentCustomer.address.zipCode}</div>
+		<div><b>City:</b> ${customerController.currentCustomer.address.city}</div>
+		<c:if test="${customerController.currentCustomer.address.state != ''}">
+			<div><b>State:</b> ${customerController.currentCustomer.address.state}</div>
+		</c:if>
+		<div><b>Country:</b> ${customerController.currentCustomer.address.country}</div>
+		<div><b>e-mail address:</b> ${customerController.currentCustomer.email}</div>
+		<c:if test="${customerController.currentCustomer.phoneNumber != ''}">
+			<div><b>Phone number:</b> ${customerController.currentCustomer.phoneNumber}</div>
 		</c:if>
 		<br>
 		
@@ -75,7 +79,9 @@
 		
 		<br>
 		<c:if test="${administratorController.administrator == null}">
-			<h:commandButton action="#{orderController.createOrder(customerController.currentCustomer)}" value="New cart" styleClass="btn btn-default"/>
+			<c:if test="${orderController.currentOrder == null}">
+				<h:commandButton action="#{orderController.createOrder(customerController.currentCustomer)}" value="New cart" styleClass="btn btn-default"/>
+			</c:if>
 			<div><h:commandButton action="#{orderController.listOrders(customerController.currentCustomer.username)}" value="My orders" styleClass="btn btn-default"/></div>
 			<c:if test="${orderController.currentOrder != null}">
 				<div><h:commandButton action="#{orderController.toOrder}" value="View shopping cart" styleClass="btn btn-default"/></div>

@@ -13,9 +13,31 @@
     <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
 	<link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/starter-template-aligned.css" rel="stylesheet">
-    
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-2.1.4.js"></script>
 	<title>Administrator Area</title>
-	
+	<style>
+		
+		.bar:hover {
+		  fill: brown;
+		}
+		
+		.axis {
+		  font: 10px sans-serif;
+		}
+		
+		.axis path,
+		.axis line {
+		  fill: none;
+		  stroke: #000;
+		  shape-rendering: crispEdges;
+		}
+		
+		.x.axis path {
+		  display: none;
+		}
+
+</style>
 </head>
 <body>
 	<f:view>
@@ -72,6 +94,14 @@
 	 
 	 <div class="col-md-offset-1" id="chart">
 	 <h1>Sales' trend in the last month</h1>
+	 <div class="row" id="button-row">
+	 	<div id="ovrl" class="btn btn-default">Overall</div>
+	 	<div id="elect" class="btn btn-default">Electronics</div>
+	 	<div id="diy" class="btn btn-default">Home and tools</div>
+	 	<div id="cloth" class="btn btn-default">Clothing</div>
+	 	<div id="sport" class="btn btn-default">Sports and outdoors</div>
+	 	<div id="videogames" class="btn btn-default">Videogames</div>
+	 </div>
 	 <script src="js/script.js"></script>
 	 </div>
 

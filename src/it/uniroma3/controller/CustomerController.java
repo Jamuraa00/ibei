@@ -9,6 +9,7 @@ import java.util.Date;
 
 import javax.ejb.EJB;
 import javax.faces.bean.SessionScoped;
+import javax.swing.JOptionPane;
 
 import it.uniroma3.model.Address;
 import it.uniroma3.model.Customer;
@@ -27,6 +28,7 @@ public class CustomerController{
 	
 	private String username;
 	private String password;
+	private String password2;
 	private String name;
 	private String surname;
 	private String email;
@@ -68,6 +70,10 @@ public class CustomerController{
 	}
 	
 	public String createCustomer() throws FileNotFoundException, IOException{
+		if (! this.password.equals(this.password2)){
+			infoBox("Type your password correctly", "Error");
+			return "newCustomer";
+		}
 		DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
 		try{
 			this.birthDate = df.parse(this.birthDateString);
@@ -101,6 +107,10 @@ public class CustomerController{
 		return "index";
 	}
 	
+	public void infoBox(String infoMessage, String titleBar){
+		JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
+	}
+	
 	//Getters & Setters
 	
 	public Long getId() {
@@ -125,6 +135,14 @@ public class CustomerController{
 	
 	public void setPassword(String password){
 		this.password = password;
+	}
+	
+	public String getPassword2(){
+		return this.password2;
+	}
+	
+	public void setPassword2(String password2){
+		this.password2 = password2;
 	}
 	
 	public String getMessage(){
